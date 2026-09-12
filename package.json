@@ -1,0 +1,14 @@
+{
+  "name": "stuco-website",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npm --prefix abhiyantriki run dev",
+    "build": "npm --prefix abhiyantriki run build",
+    "lint": "npm --prefix abhiyantriki run lint",
+    "preview": "npm --prefix abhiyantriki run preview",
+    "start": "node server.js",
+    "test": "npm --prefix abhiyantriki test"
+  }
+}

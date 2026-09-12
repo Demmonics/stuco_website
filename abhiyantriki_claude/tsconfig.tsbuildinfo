@@ -1,1 +1,0 @@
-{"root":["./src/App.tsx","./src/main.tsx","./src/components/loader/PacmanLoader.tsx","./src/components/three/HeroScene.tsx","./src/content/festConfig.ts","./src/lib/gsap.ts","./src/lib/lenis.ts","./src/store/useUIStore.ts"],"version":"5.9.3"}
