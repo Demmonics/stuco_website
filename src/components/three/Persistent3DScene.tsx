@@ -68,12 +68,10 @@ function PersistentBrainModel({ scrollProgressRef }: { scrollProgressRef: React.
         mesh.receiveShadow = false;
         if (mesh.material) {
           const m = mesh.material as THREE.MeshStandardMaterial;
-          m.transparent = true;
-          m.opacity = 0.40; // Lowered to 0.40 so it acts as an ambient backdrop behind the text
           if (m.color) {
-            m.color = new THREE.Color('#8e949e');
-            m.roughness = 0.45;
-            m.metalness = 0.8;
+            m.color = new THREE.Color('#a3a9b3');
+            m.roughness = 0.4;
+            m.metalness = 0.85;
           }
         }
       }
@@ -96,16 +94,15 @@ function PersistentBrainModel({ scrollProgressRef }: { scrollProgressRef: React.
     }
 
     // Dynamic Interpolation across Scroll Sections:
-    // Hero: Scaled down (0.88) so it does not occlude outer letters A, B, H and K, I
-    let targetPos = [0, -0.16, 0.1];
+    let targetPos = [0, -0.15, 0.25];
     let targetRot = [0, 0, 0];
-    let targetScale = 0.88;
+    let targetScale = 1.15;
 
     if (p < 0.16) {
       const sub = p / 0.16;
-      targetPos = [0, -0.16 - sub * 0.18, 0.1 + sub * 0.1];
+      targetPos = [0, -0.15 - sub * 0.2, 0.25 + sub * 0.1];
       targetRot = [0.04, sub * 0.35, 0];
-      targetScale = 0.88 - sub * 0.03;
+      targetScale = 1.15 - sub * 0.05;
     } else if (p < 0.38) {
       const sub = (p - 0.16) / 0.22;
       targetPos = [
@@ -114,7 +111,7 @@ function PersistentBrainModel({ scrollProgressRef }: { scrollProgressRef: React.
         0.2
       ];
       targetRot = [0.06, THREE.MathUtils.lerp(0.35, 0.85, sub), -0.04];
-      targetScale = THREE.MathUtils.lerp(0.88, 0.85, sub);
+      targetScale = THREE.MathUtils.lerp(1.1, 0.85, sub);
     } else if (p < 0.60) {
       const sub = (p - 0.38) / 0.22;
       targetPos = [
@@ -158,30 +155,30 @@ function PersistentBrainModel({ scrollProgressRef }: { scrollProgressRef: React.
   });
 
   return (
-    <group ref={groupRef} position={[0, -0.16, 0.1]}>
-      {/* Soft Ambient Lights Illuminating Point-Cloud without Harsh Glare */}
-      <pointLight position={[0, 1, 2]} color="#ffffff" intensity={1.6} distance={8} />
-      <pointLight position={[-3, 2, 2]} color="#8c929d" intensity={1.2} distance={8} />
-      <pointLight position={[3, -2, -2]} color="#4a4d53" intensity={0.9} distance={8} />
+    <group ref={groupRef} position={[0, -0.15, 0.25]}>
+      {/* Volumetric Point Lights Illuminating Point-Cloud */}
+      <pointLight position={[0, 1, 2]} color="#ffffff" intensity={2.6} distance={8} />
+      <pointLight position={[-3, 2, 2]} color="#8c929d" intensity={1.8} distance={8} />
+      <pointLight position={[3, -2, -2]} color="#4a4d53" intensity={1.4} distance={8} />
 
       {/* Atmospheric stardust halo */}
       <Sparkles
         count={80}
-        scale={4.8}
-        size={1.6}
-        speed={0.2}
+        scale={5.2}
+        size={1.8}
+        speed={0.25}
         color="#b0b7c4"
-        opacity={0.3}
+        opacity={0.4}
       />
 
       {/* Subtle outer particle orbit ring */}
       <mesh ref={orbitRingRef} rotation={[Math.PI / 3, 0, 0]}>
-        <ringGeometry args={[1.75, 1.77, 64]} />
-        <meshBasicMaterial color="#ffffff" transparent opacity={0.08} side={THREE.DoubleSide} />
+        <ringGeometry args={[1.9, 1.92, 64]} />
+        <meshBasicMaterial color="#ffffff" transparent opacity={0.16} side={THREE.DoubleSide} />
       </mesh>
 
-      {/* Holographic Brain Core scaled to sit compactly as an ambient backdrop */}
-      <group ref={brainRef} scale={0.92} position={[0, 0, 0.1]}>
+      {/* Holographic Brain Core */}
+      <group ref={brainRef} scale={1.15} position={[0, 0, 0.15]}>
         <primitive object={brainGltf.scene} />
       </group>
     </group>
@@ -223,7 +220,7 @@ export const Persistent3DScene: React.FC = () => {
   return (
     <div
       className="fixed inset-0 pointer-events-none select-none"
-      style={{ zIndex: 1, pointerEvents: 'none' }}
+      style={{ zIndex: 0 }}
       aria-hidden="true"
     >
       <Canvas
