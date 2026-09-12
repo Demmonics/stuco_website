@@ -40,7 +40,7 @@ let memoryConfig = {
   key: 'main_config',
   googleFormUrl:
     process.env.INITIAL_GOOGLE_FORM_URL ||
-    'https://forms.gle/y81No241PDAsHmBCA',
+    'https://docs.google.com/forms/d/e/1FAIpQLSedXlK3LEjnhzmK-MYlxT1kH8sscxsm9aZMcHIiBMzygT5raQ/viewform?embedded=true',
   registrationOpen: true,
   updatedBy: {
     userId: 'system',

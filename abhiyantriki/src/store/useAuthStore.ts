@@ -77,6 +77,7 @@ interface AuthState {
   openAuthModal: (mode?: 'signin' | 'signup') => void;
   closeAuthModal: () => void;
   signIn: (credentials: z.infer<typeof loginSchema>) => Promise<boolean>;
+  signInWithGoogle: () => Promise<boolean>;
   signUp: (data: z.infer<typeof registerSchema>) => Promise<boolean>;
   signOut: () => Promise<void>;
   switchDemoAccount: (role: UserRole) => void;
@@ -161,6 +162,31 @@ export const useAuthStore = create<AuthState>()(
             error: err instanceof z.ZodError ? err.issues[0]?.message : (err.message || 'Authentication failed'),
             isLoading: false,
           });
+          return false;
+        }
+      },
+
+      signInWithGoogle: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          if (isSupabaseConfigured) {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+              provider: 'google',
+              options: {
+                redirectTo: `${window.location.origin}/`,
+              },
+            });
+            if (error) throw error;
+            return true;
+          }
+          throw new Error('Supabase authentication is not configured.');
+        } catch (err: any) {
+          console.error('[Supabase Google Auth]:', err);
+          const raw = err.message || 'Failed to initialize Google Sign-In';
+          const msg = raw.includes('provider is not enabled')
+            ? 'Google OAuth provider is not yet enabled in your Supabase Auth settings. You can sign in using Email or Quick Student Demo below.'
+            : raw;
+          set({ error: msg, isLoading: false });
           return false;
         }
       },
@@ -305,6 +331,18 @@ export const useAuthStore = create<AuthState>()(
                   college: profile.college,
                   rollNumber: profile.roll_number,
                   role: profile.role,
+                },
+                isAuthenticated: true,
+              });
+            } else {
+              const meta = data.session.user.user_metadata || {};
+              set({
+                user: {
+                  id: data.session.user.id,
+                  fullName: meta.full_name || meta.name || data.session.user.email?.split('@')[0] || 'Student Attendee',
+                  email: data.session.user.email || '',
+                  college: 'K. J. Somaiya School of Engineering',
+                  role: 'student',
                 },
                 isAuthenticated: true,
               });

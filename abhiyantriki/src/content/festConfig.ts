@@ -1,4 +1,5 @@
-export const GOOGLE_FORM_URL = "https://forms.gle/y81No241PDAsHmBCA";
+export const GOOGLE_FORM_SHORTLINK = "https://forms.gle/y81No241PDAsHmBCA";
+export const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSedXlK3LEjnhzmK-MYlxT1kH8sscxsm9aZMcHIiBMzygT5raQ/viewform?embedded=true";
 
 export interface FestConfig {
   name: string;

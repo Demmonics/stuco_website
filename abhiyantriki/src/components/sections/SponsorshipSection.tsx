@@ -2,6 +2,7 @@ import React from 'react';
 import { Download, Mail, Check } from 'lucide-react';
 import { soundFx } from '../../lib/audioManager';
 import { TrueFocus, BlurText } from '../reactbits';
+import { FEST_CONFIG } from '../../content/festConfig';
 
 interface OpportunityPillar {
   title: string;
@@ -131,13 +132,13 @@ export const SponsorshipSection: React.FC = () => {
             Custom engagement plans, experiential booth specifications, and institutional branding slots curated for your enterprise objectives.
           </p>
           <div className="text-[11px] font-mono text-zinc-500 pt-1">
-            SECRETARIAT // <span className="text-zinc-300">partnerships@somaiya.edu</span>
+            SECRETARIAT // <span className="text-zinc-300">{FEST_CONFIG.council.email}</span>
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
           <a
-            href="mailto:partnerships@somaiya.edu?subject=Abhiyantriki%20Partnership%20Inquiry"
+            href={`mailto:${FEST_CONFIG.council.email}?subject=Abhiyantriki%20Partnership%20Inquiry`}
             onClick={() => soundFx.play('pill', 0.5)}
             className="px-6 py-3 rounded-full bg-white text-black font-mono text-xs uppercase tracking-[0.2em] font-medium hover:bg-neutral-200 transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95"
           >
