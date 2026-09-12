@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useUIStore } from './store/useUIStore';
 import { useAuthStore } from './store/useAuthStore';
 import { useCMSStore } from './store/useCMSStore';
 import { FEST_CONFIG, GOOGLE_FORM_URL } from './content/festConfig';
@@ -34,6 +35,7 @@ const SECTIONS = [
 ];
 
 export function App() {
+  const { isMuted, toggleMute } = useUIStore();
   const { user, isAuthenticated, openAuthModal, signOut } = useAuthStore();
   const { registrations } = useCMSStore();
 
@@ -266,6 +268,24 @@ export function App() {
 
           {/* Right Action Bar */}
           <div className="flex items-center gap-3">
+
+            {/* Audio Mute / Unmute Button */}
+            <button
+              onClick={() => {
+                toggleMute();
+                soundFx.setLoaderMuted(!isMuted);
+              }}
+              className="px-2.5 py-1.5 rounded-full text-zinc-400 hover:text-white text-xs flex items-center gap-2 border border-white/[0.08] hover:border-white/30 transition-all font-mono"
+              title={isMuted ? 'Unmute audio' : 'Mute audio'}
+            >
+              <div className="relative flex items-center justify-center w-3 h-3">
+                <div className={`w-2.5 h-2.5 rounded-full border border-zinc-400 ${isMuted ? 'opacity-40' : 'animate-ping'}`} />
+                <div className={`w-1 h-1 rounded-full ${isMuted ? 'bg-zinc-500' : 'bg-white'}`} />
+              </div>
+              <span className="text-[10px] tracking-widest hidden sm:inline">
+                {isMuted ? 'AUDIO OFF' : 'AUDIO ON'}
+              </span>
+            </button>
 
             {/* User Profile / Auth Action */}
             {isAuthenticated && user ? (
