@@ -215,37 +215,39 @@ export const AuthModal: React.FC = () => {
           <div className="flex items-center justify-between">
             <span className="font-mono text-[10px] text-zinc-400 flex items-center gap-1.5 tracking-wider">
               <Sparkles className="w-3 h-3 text-zinc-400" />
-              1-CLICK DEMO TEST ACCOUNTS
+              QUICK TEST & DEMO
             </span>
-            <span className="text-[10px] font-mono text-zinc-600">Quick Test</span>
+            <span className="text-[10px] font-mono text-zinc-600">Strict Auth</span>
           </div>
 
-          <div className="grid grid-cols-3 gap-2 text-center font-mono text-[11px]">
+          <div className="grid grid-cols-2 gap-2 text-center font-mono text-[11px]">
             <button
               type="button"
               onClick={() => handleDemoSwitch('student')}
-              className="p-2 rounded-lg bg-neutral-900 border border-white/10 hover:border-white/30 text-zinc-300 transition-all hover:bg-neutral-850"
+              className="p-2.5 rounded-lg bg-neutral-900 border border-white/10 hover:border-white/30 text-zinc-300 transition-all hover:bg-neutral-850 flex flex-col items-center justify-center gap-0.5"
             >
-              <div className="font-medium text-white">Student</div>
-              <div className="text-[9px] text-zinc-500 truncate">Aditi S.</div>
+              <div className="font-medium text-white">Student Demo</div>
+              <div className="text-[9px] text-zinc-500">Aditi Sharma (Student)</div>
             </button>
+
             <button
               type="button"
-              onClick={() => handleDemoSwitch('council_admin')}
-              className="p-2 rounded-lg bg-neutral-900 border border-white/10 hover:border-white/30 text-zinc-300 transition-all hover:bg-neutral-850"
+              onClick={() => {
+                setEmail('rahul.verma@somaiya.edu');
+                soundFx.play('pill', 0.4);
+              }}
+              className="p-2.5 rounded-lg bg-neutral-900 border border-white/10 hover:border-amber-500/40 text-zinc-300 transition-all hover:bg-neutral-850 flex flex-col items-center justify-center gap-0.5"
             >
-              <div className="font-medium text-white">Admin</div>
-              <div className="text-[9px] text-zinc-500 truncate">Rahul V.</div>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDemoSwitch('super_admin')}
-              className="p-2 rounded-lg bg-neutral-900 border border-white/10 hover:border-white/30 text-zinc-300 transition-all hover:bg-neutral-850"
-            >
-              <div className="font-medium text-white">Super Admin</div>
-              <div className="text-[9px] text-zinc-500 truncate">GenSec Lead</div>
+              <div className="font-medium text-amber-300 flex items-center gap-1">
+                <Lock className="w-3 h-3" />
+                <span>Council Admin</span>
+              </div>
+              <div className="text-[9px] text-zinc-500">Auto-fill & Enter Password</div>
             </button>
           </div>
+          <p className="text-[10px] font-mono text-zinc-500 text-center">
+            Council & Super Admin access requires password authentication. Automatic 1-click elevation is disabled.
+          </p>
         </div>
       </div>
     </div>
