@@ -9,7 +9,7 @@ function AtmosphericDustMotes() {
   const pointsRef = useRef<THREE.Points>(null);
 
   const positions = useMemo(() => {
-    const count = 180;
+    const count = 75;
     const pos = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
       pos[i * 3] = (Math.random() - 0.5) * 14;
@@ -94,23 +94,16 @@ function PersistentBrainModel({ scrollProgressRef }: { scrollProgressRef: React.
     }
 
     // Dynamic Interpolation across Scroll Sections:
-    // 1. Hero: Centered elevated position (x: 0)
-    // 2. About: Pushed firmly into right half (x: +2.85, scale: 0.85) leaving wide negative gap
-    // 3. Arenas: Right-side alignment (x: +2.55, scale: 0.95) framing the cards
-    // 4. Projects: Background upper-right (x: +1.9, y: +1.35, z: -2.8, scale: 0.70) keeping headline & description unobstructed
-    // 5. Archives: Architectural descent (x: 0, y: -1.0, scale: 0.95)
     let targetPos = [0, -0.15, 0.25];
     let targetRot = [0, 0, 0];
     let targetScale = 1.15;
 
     if (p < 0.16) {
-      // 1. HERO: Centered elevated position framing the title
       const sub = p / 0.16;
       targetPos = [0, -0.15 - sub * 0.2, 0.25 + sub * 0.1];
       targetRot = [0.04, sub * 0.35, 0];
       targetScale = 1.15 - sub * 0.05;
     } else if (p < 0.38) {
-      // 2. ABOUT: Firmly pushed into the right half (x: +2.85, scale: 0.85)
       const sub = (p - 0.16) / 0.22;
       targetPos = [
         THREE.MathUtils.lerp(0, 2.85, sub),
@@ -120,7 +113,6 @@ function PersistentBrainModel({ scrollProgressRef }: { scrollProgressRef: React.
       targetRot = [0.06, THREE.MathUtils.lerp(0.35, 0.85, sub), -0.04];
       targetScale = THREE.MathUtils.lerp(1.1, 0.85, sub);
     } else if (p < 0.60) {
-      // 3. ARENAS / SERVICE: Clean right-side framing (+2.55), zero horizontal gear obstruction
       const sub = (p - 0.38) / 0.22;
       targetPos = [
         2.55,
@@ -130,8 +122,6 @@ function PersistentBrainModel({ scrollProgressRef }: { scrollProgressRef: React.
       targetRot = [0.05, THREE.MathUtils.lerp(0.85, -0.75, sub), 0.03];
       targetScale = 0.95;
     } else if (p < 0.82) {
-      // 4. PROJECTS: Background upper-right (x: +1.9, y: +1.35, z: -2.8, scale: 0.70)
-      // Completely avoids "Projects" heading and italicized copy!
       const sub = (p - 0.60) / 0.22;
       targetPos = [
         THREE.MathUtils.lerp(2.55, 1.9, sub),
@@ -141,7 +131,6 @@ function PersistentBrainModel({ scrollProgressRef }: { scrollProgressRef: React.
       targetRot = [0.08, THREE.MathUtils.lerp(-0.75, 0.3, sub), 0];
       targetScale = THREE.MathUtils.lerp(0.95, 0.70, sub);
     } else {
-      // 5. ARCHIVES & FINALE: Low-angle architectural perspective descent
       const sub = (p - 0.82) / 0.18;
       targetPos = [
         THREE.MathUtils.lerp(1.9, 0, sub),
@@ -174,7 +163,7 @@ function PersistentBrainModel({ scrollProgressRef }: { scrollProgressRef: React.
 
       {/* Atmospheric stardust halo */}
       <Sparkles
-        count={240}
+        count={80}
         scale={5.2}
         size={1.8}
         speed={0.25}
@@ -209,11 +198,18 @@ export const Persistent3DScene: React.FC = () => {
   const scrollProgressRef = useRef<number>(0);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = totalScroll > 0 ? Math.min(1, Math.max(0, scrollY / totalScroll)) : 0;
-      scrollProgressRef.current = progress;
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+          const progress = totalScroll > 0 ? Math.min(1, Math.max(0, scrollY / totalScroll)) : 0;
+          scrollProgressRef.current = progress;
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -229,8 +225,8 @@ export const Persistent3DScene: React.FC = () => {
     >
       <Canvas
         camera={{ position: [0, 0, 5.6], fov: 44 }}
-        gl={{ antialias: true, alpha: true }}
-        dpr={[1, 1.5]}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+        dpr={[1, 1.2]}
       >
         <ambientLight intensity={0.42} />
         <directionalLight position={[4, 6, 4]} intensity={1.3} color="#ffffff" />

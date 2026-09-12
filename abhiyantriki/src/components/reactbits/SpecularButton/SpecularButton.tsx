@@ -195,11 +195,16 @@ export const SpecularButton: React.FC<SpecularButtonProps> = ({
     let bright = 0;
     let last = performance.now();
     let raf = 0;
+    let isVisible = true;
 
     const lineC = new Color();
     const baseC = new Color();
 
     const update = (now: number) => {
+      if (!isVisible) {
+        raf = 0;
+        return;
+      }
       raf = requestAnimationFrame(update);
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
@@ -226,10 +231,39 @@ export const SpecularButton: React.FC<SpecularButtonProps> = ({
       program.uniforms.uThickness.value = p.thickness * dpr;
       renderer.render({ scene: mesh });
     };
-    raf = requestAnimationFrame(update);
+
+    const startLoop = () => {
+      if (!raf && isVisible) {
+        last = performance.now();
+        raf = requestAnimationFrame(update);
+      }
+    };
+
+    const stopLoop = () => {
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    };
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting && !document.hidden;
+        if (isVisible) {
+          startLoop();
+        } else {
+          stopLoop();
+        }
+      },
+      { threshold: 0.05 }
+    );
+    io.observe(btn);
+
+    startLoop();
 
     return () => {
-      cancelAnimationFrame(raf);
+      stopLoop();
+      io.disconnect();
       ro.disconnect();
       window.removeEventListener('pointermove', onPointerMove);
       if (gl.canvas.parentNode === fx) fx.removeChild(gl.canvas);

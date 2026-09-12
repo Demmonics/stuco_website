@@ -142,19 +142,19 @@ export function App() {
       </div>
 
       {/* 2b. Subtle Ambient Perlin Noise Waves (Low Opacity Backdrop Layer) */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true" style={{ opacity: 0.65 }}>
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true" style={{ opacity: 0.6 }}>
         <Waves
           lineColor="rgba(255, 255, 255, 0.07)"
           backgroundColor="transparent"
-          waveSpeedX={0.012}
-          waveSpeedY={0.005}
-          waveAmpX={30}
+          waveSpeedX={0.01}
+          waveSpeedY={0.004}
+          waveAmpX={28}
           waveAmpY={14}
-          xGap={14}
-          yGap={32}
+          xGap={32}
+          yGap={40}
           friction={0.925}
           tension={0.006}
-          maxCursorMove={90}
+          maxCursorMove={80}
         />
       </div>
 

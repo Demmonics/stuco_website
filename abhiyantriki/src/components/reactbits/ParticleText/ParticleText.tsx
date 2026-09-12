@@ -180,15 +180,15 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
       ctx.fill();
     };
 
-    const render = (now: number) => {
-      ctx.clearRect(0, 0, width, height);
+    let isVisible = true;
 
-      if (glow && !reducedMotion) {
-        ctx.shadowBlur = particleSize * 3;
-        ctx.shadowColor = highlightColor;
-      } else {
-        ctx.shadowBlur = 0;
+    const render = (now: number) => {
+      if (!isVisible) {
+        animationFrame = null;
+        return;
       }
+
+      ctx.clearRect(0, 0, width, height);
 
       pointer.smoothX += (pointer.x - pointer.smoothX) * 0.18;
       pointer.smoothY += (pointer.y - pointer.smoothY) * 0.18;
@@ -233,7 +233,6 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
       });
 
       ctx.globalAlpha = 1;
-      ctx.shadowBlur = 0;
 
       if (gathering && complete) {
         gathering = false;
@@ -243,7 +242,7 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
     };
 
     const ensureRenderLoop = () => {
-      if (animationFrame === null) {
+      if (animationFrame === null && isVisible) {
         animationFrame = window.requestAnimationFrame(render);
       }
     };
@@ -323,7 +322,7 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
         }
       }
 
-      const maxParticles = Math.max(900, Math.min(5200, Math.floor((width * height) / 90)));
+      const maxParticles = Math.max(800, Math.min(2200, Math.floor((width * height) / 160)));
       const stride = Math.max(1, Math.ceil(targets.length / maxParticles));
       const baseRgb = hexToRgb(color);
       const highlightRgb = hexToRgb(highlightColor);
@@ -414,11 +413,42 @@ export const ParticleText: React.FC<ParticleTextProps> = ({
 
     const resizeObserver = new ResizeObserver(queueSample);
     resizeObserver.observe(container);
+
+    const intersectionObserver = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting && !document.hidden;
+        if (isVisible) {
+          ensureRenderLoop();
+        } else if (animationFrame !== null) {
+          window.cancelAnimationFrame(animationFrame);
+          animationFrame = null;
+        }
+      },
+      { threshold: 0.05 }
+    );
+    intersectionObserver.observe(container);
+
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        isVisible = false;
+        if (animationFrame !== null) {
+          window.cancelAnimationFrame(animationFrame);
+          animationFrame = null;
+        }
+      } else {
+        isVisible = true;
+        ensureRenderLoop();
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
     sampleText();
 
     return () => {
       buildId += 1;
       resizeObserver.disconnect();
+      intersectionObserver.disconnect();
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       reduceMotionQuery?.removeEventListener('change', handleReduceMotionChange);
       canvas.removeEventListener('pointerenter', handlePointerEnter);
       canvas.removeEventListener('pointermove', handlePointerMove);

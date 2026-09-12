@@ -114,9 +114,17 @@ export const EchoText: React.FC<EchoTextProps> = ({
       canHover = hoverMedia.matches;
     }
 
+    let isVisible = false;
+
+    const startLoop = () => {
+      if (!frameRef.current && isVisible) {
+        frameRef.current = requestAnimationFrame(renderFrame);
+      }
+    };
+
     const handlePointerMove = (event: MouseEvent) => {
       const state = stateRef.current;
-      if (!state) return;
+      if (!state || !isVisible) return;
 
       const rect = root.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
@@ -132,6 +140,8 @@ export const EchoText: React.FC<EchoTextProps> = ({
 
       state.targetX = dirX * reach * safeOffset;
       state.targetY = dirY * reach * safeOffset * 0.72;
+
+      startLoop();
     };
 
     const handlePointerLeave = () => {
@@ -139,6 +149,7 @@ export const EchoText: React.FC<EchoTextProps> = ({
       if (!state) return;
       state.targetX = 0;
       state.targetY = 0;
+      startLoop();
     };
 
     if (canHover) {
@@ -152,7 +163,10 @@ export const EchoText: React.FC<EchoTextProps> = ({
 
     const renderFrame = (now: number) => {
       const state = stateRef.current;
-      if (!state) return;
+      if (!state || !isVisible) {
+        frameRef.current = null;
+        return;
+      }
 
       const elapsed = now - state.startTime;
       const entranceProgress = entranceEnabled && safeDuration > 0 ? clamp(elapsed / safeDuration, 0, 1) : 1;
@@ -204,20 +218,32 @@ export const EchoText: React.FC<EchoTextProps> = ({
         state.activity > 0.002 ||
         Math.abs(state.targetX) > 0.01 ||
         Math.abs(state.targetY) > 0.01 ||
-        entranceProgress < 1 ||
-        canHover;
+        entranceProgress < 1;
 
-      if (stillMoving) {
+      if (stillMoving && isVisible) {
         frameRef.current = requestAnimationFrame(renderFrame);
       } else {
         frameRef.current = null;
       }
     };
 
-    frameRef.current = requestAnimationFrame(renderFrame);
+    const intersectionObserver = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting && !document.hidden;
+        if (isVisible) {
+          startLoop();
+        } else if (frameRef.current) {
+          cancelAnimationFrame(frameRef.current);
+          frameRef.current = null;
+        }
+      },
+      { threshold: 0.05 }
+    );
+    intersectionObserver.observe(root);
 
     return () => {
       cleanupPointer();
+      intersectionObserver.disconnect();
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
       frameRef.current = null;
       stateRef.current = null;

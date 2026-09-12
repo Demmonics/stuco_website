@@ -269,7 +269,14 @@ export const Waves: React.FC<WavesProps> = ({
       ctx.stroke();
     }
 
+    let isVisible = true;
+
     function tick(t: number) {
+      if (!isVisible) {
+        frameIdRef.current = null;
+        return;
+      }
+
       const mouse = mouseRef.current;
       mouse.sx += (mouse.x - mouse.sx) * 0.1;
       mouse.sy += (mouse.y - mouse.sy) * 0.1;
@@ -287,6 +294,40 @@ export const Waves: React.FC<WavesProps> = ({
       drawLines();
       frameIdRef.current = requestAnimationFrame(tick);
     }
+
+    function startLoop() {
+      if (!frameIdRef.current && isVisible) {
+        frameIdRef.current = requestAnimationFrame(tick);
+      }
+    }
+
+    function stopLoop() {
+      if (frameIdRef.current) {
+        cancelAnimationFrame(frameIdRef.current);
+        frameIdRef.current = null;
+      }
+    }
+
+    function onVisibilityChange() {
+      if (document.hidden) {
+        isVisible = false;
+        stopLoop();
+      } else {
+        isVisible = true;
+        startLoop();
+      }
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting && !document.hidden;
+      if (isVisible) {
+        startLoop();
+      } else {
+        stopLoop();
+      }
+    }, { threshold: 0.05 });
+
+    observer.observe(container);
 
     function onResize() {
       setSize();
@@ -315,16 +356,19 @@ export const Waves: React.FC<WavesProps> = ({
 
     setSize();
     setLines();
-    frameIdRef.current = requestAnimationFrame(tick);
+    startLoop();
     window.addEventListener('resize', onResize);
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    document.addEventListener('visibilitychange', onVisibilityChange);
 
     return () => {
+      observer.disconnect();
       window.removeEventListener('resize', onResize);
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('touchmove', onTouchMove);
-      if (frameIdRef.current) cancelAnimationFrame(frameIdRef.current);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      stopLoop();
     };
   }, []);
 
