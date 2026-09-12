@@ -1,0 +1,30 @@
+{
+  "name": "kjsse-council-backend",
+  "version": "1.0.0",
+  "description": "Hardened Express backend with Supabase Auth, MongoDB, rate limiting, and audit logging for KJSSE Council & Abhiyantriki",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test test/security.test.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.5.0",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.0.0",
+    "hpp": "^0.2.3",
+    "mongoose": "^8.12.1"
+  },
+  "devDependencies": {
+    "supertest": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
