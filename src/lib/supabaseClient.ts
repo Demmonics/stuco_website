@@ -2,11 +2,14 @@ import { createClient } from '@supabase/supabase-js';
 
 const env = (typeof import.meta !== 'undefined' && import.meta?.env) ? import.meta.env : ((globalThis as any)?.process?.env || {});
 
-const supabaseUrl = (env as any)?.VITE_SUPABASE_URL || 'https://placeholder-abhiyantriki.supabase.co';
-const supabaseAnonKey = (env as any)?.VITE_SUPABASE_ANON_KEY || 'placeholder-anon-key';
+const supabaseUrl =
+  (env as any)?.VITE_SUPABASE_URL || 'https://pvajqrvldshxgqkpsclm.supabase.co';
+const supabaseAnonKey =
+  (env as any)?.VITE_SUPABASE_ANON_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2YWpxcnZsZHNoeGdxa3BzY2xtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3NTAyNjAsImV4cCI6MjEwMzMyNjI2MH0.cXLs5fuww1RVbLoOHRI8EOnAP-MsbuFf1lwHa8u1Ddg';
 
 export const isSupabaseConfigured = Boolean(
-  (env as any)?.VITE_SUPABASE_URL && (env as any)?.VITE_SUPABASE_ANON_KEY
+  supabaseUrl && supabaseAnonKey && !supabaseUrl.includes('placeholder')
 );
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);

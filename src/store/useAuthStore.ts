@@ -246,8 +246,13 @@ export const useAuthStore = create<AuthState>()(
       },
 
       switchDemoAccount: (role: UserRole) => {
+        // Security Rule: Never allow automatic 1-click escalation to admin or super_admin
+        if (role !== 'student') {
+          console.warn('[Security Guard] Direct 1-click admin escalation blocked. Admins must authenticate via credentials.');
+          return;
+        }
         set({
-          user: DEMO_ACCOUNTS[role],
+          user: DEMO_ACCOUNTS.student,
           isAuthenticated: true,
           authModalOpen: false,
         });
