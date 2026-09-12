@@ -1,0 +1,86 @@
+{
+  "_comment": "Generated per spec 06. Two models are marked excluded, not just non-commercial — they should not ship on this site while it carries paid sponsorship tiers. See 06-3D-ASSETS-SCENE-PLAN.md for the full reasoning.",
+  "models": [
+    {
+      "title": "#24 Dizzying space travel - \"Inktober2019\"",
+      "author": "Canary Games",
+      "authorUrl": "https://sketchfab.com/CapAlatriste",
+      "source": "https://sketchfab.com/3d-models/24-dizzying-space-travel-inktober2019-08ee5e4cabee421ebf0b2cc927d4d6fc",
+      "license": "CC-BY-4.0",
+      "commercialUse": true,
+      "status": "included"
+    },
+    {
+      "title": "Brain hologram",
+      "author": "oxterium",
+      "authorUrl": "https://sketchfab.com/oxterium",
+      "source": "https://sketchfab.com/3d-models/brain-hologram-09d686a1a1f745cba6b2385d0c831214",
+      "license": "Sketchfab Standard",
+      "commercialUse": true,
+      "status": "included"
+    },
+    {
+      "title": "Gears",
+      "author": "melaamory",
+      "authorUrl": "https://sketchfab.com/melaamory",
+      "source": "https://sketchfab.com/3d-models/gears-1fa1e31142714a11a2a77606c416aa05",
+      "license": "CC-BY-4.0",
+      "commercialUse": true,
+      "status": "included"
+    },
+    {
+      "title": "Manual Transmission/ gear box",
+      "author": "\u2733Unforgettable Name\u2733",
+      "authorUrl": "https://sketchfab.com/austinchasejez23",
+      "source": "https://sketchfab.com/3d-models/manual-transmission-gear-box-811ce409dda746099924ac0b39d34140",
+      "license": "CC-BY-NC-4.0",
+      "commercialUse": false,
+      "status": "EXCLUDED — non-commercial license conflicts with paid sponsorship tiers; use gears.glb instead"
+    },
+    {
+      "title": "Need some space?",
+      "author": "Lo\u00efc Norgeot",
+      "authorUrl": "https://sketchfab.com/norgeotloic",
+      "source": "https://sketchfab.com/3d-models/need-some-space-d6521362b37b48e3a82bce4911409303",
+      "license": "CC-BY-4.0",
+      "commercialUse": true,
+      "status": "included"
+    },
+    {
+      "title": "PacMan",
+      "author": "subtixx",
+      "authorUrl": "https://sketchfab.com/subtixx",
+      "source": "https://sketchfab.com/3d-models/pacman-17800bd2ae224ee281e43efcbc498e43",
+      "license": "CC-BY-NC-4.0",
+      "commercialUse": false,
+      "status": "EXCLUDED — non-commercial license; loader uses an original canvas-drawn shape instead, see PacmanLoader.tsx"
+    },
+    {
+      "title": "Pacman Ghost Inky",
+      "author": "Chaitanya Krishnan",
+      "authorUrl": "https://sketchfab.com/chaitanyak",
+      "source": "https://sketchfab.com/3d-models/pacman-ghost-inky-bf94cb68178349f589fdb47b6c2c8b73",
+      "license": "CC-BY-4.0",
+      "commercialUse": true,
+      "status": "included — reserved for the loader's final 3D dissolve moment only, per spec 07"
+    },
+    {
+      "title": "space boi",
+      "author": "silvercrow101",
+      "authorUrl": "https://sketchfab.com/silvercrow101",
+      "source": "https://sketchfab.com/3d-models/space-boi-f6a8c6a6727b4f2cb020c8b50bb2ee60",
+      "license": "CC-BY-NC-4.0",
+      "commercialUse": false,
+      "status": "EXCLUDED — non-commercial license; the Option A/B decision in spec 06 is moot until/unless a commercial license is obtained"
+    },
+    {
+      "title": "Sports Bike",
+      "author": "Futurealiti",
+      "authorUrl": "https://sketchfab.com/futurealiti",
+      "source": "https://sketchfab.com/3d-models/sports-bike-a80259b859c842d5824c25c61e0fc421",
+      "license": "CC-BY-4.0",
+      "commercialUse": true,
+      "status": "included"
+    }
+  ]
+}
