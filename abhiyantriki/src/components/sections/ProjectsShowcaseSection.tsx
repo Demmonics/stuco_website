@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { FEST_EVENTS } from '../../content/events';
 import { GOOGLE_FORM_URL } from '../../content/festConfig';
+import { useCMSStore } from '../../store/useCMSStore';
 import { soundFx } from '../../lib/audioManager';
 import { ArrowUpRight } from 'lucide-react';
 
@@ -21,6 +22,7 @@ const HUDProjectCard: React.FC<HUDCardProps> = ({ proj, index }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
+  const googleFormUrl = useCMSStore((state) => state.googleFormUrl);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -138,7 +140,7 @@ const HUDProjectCard: React.FC<HUDCardProps> = ({ proj, index }) => {
           SPEC.0{index + 1}
         </span>
         <a
-          href={GOOGLE_FORM_URL}
+          href={googleFormUrl || GOOGLE_FORM_URL}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => soundFx.play('pill', 0.4)}

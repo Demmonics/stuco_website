@@ -37,7 +37,11 @@ const SECTIONS = [
 export function App() {
   const { isMuted, toggleMute } = useUIStore();
   const { user, isAuthenticated, openAuthModal, signOut } = useAuthStore();
-  const { registrations } = useCMSStore();
+  const { registrations, googleFormUrl, fetchGoogleFormConfig } = useCMSStore();
+
+  useEffect(() => {
+    fetchGoogleFormConfig();
+  }, [fetchGoogleFormConfig]);
 
   const [view, setView] = useState<'fest' | 'dashboard' | 'admin'>('fest');
   const [showCreditsModal, setShowCreditsModal] = useState(false);
@@ -319,7 +323,7 @@ export function App() {
 
             {/* Register Outlined Pill CTA (High Visibility & Google Form Link) */}
             <a
-              href={GOOGLE_FORM_URL}
+              href={googleFormUrl || GOOGLE_FORM_URL}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => soundFx.play('pill', 0.5)}

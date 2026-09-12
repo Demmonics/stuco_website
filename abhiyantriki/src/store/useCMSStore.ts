@@ -3,6 +3,8 @@ import { persist } from 'zustand/middleware';
 import type { FestEvent } from '../content/events';
 import { FEST_EVENTS } from '../content/events';
 
+import { GOOGLE_FORM_URL } from '../content/festConfig';
+
 export interface AdminUser {
   id: string;
   fullName: string;
@@ -46,17 +48,42 @@ export interface RegistrationRecord {
   registeredAt: string;
 }
 
+export interface AuditLogEntry {
+  _id?: string;
+  action: string;
+  userId: string;
+  userEmail: string;
+  userRole: string;
+  oldValue: any;
+  newValue: any;
+  ipAddress: string;
+  userAgent?: string;
+  createdAt: string;
+}
+
 interface CMSState {
   events: FestEvent[];
   albums: GalleryAlbum[];
   registrations: RegistrationRecord[];
   adminUsers: AdminUser[];
+  googleFormUrl: string;
+  googleFormLastUpdated: string | null;
+  auditLogs: AuditLogEntry[];
 
   // Event CMS actions
   addEvent: (event: Omit<FestEvent, 'id'>) => void;
   updateEvent: (id: string, updates: Partial<FestEvent>) => void;
   deleteEvent: (id: string) => void;
   toggleEventRegistration: (id: string) => void;
+
+  // Google Form Secure Backend Sync
+  fetchGoogleFormConfig: () => Promise<void>;
+  saveGoogleFormUrlBackend: (
+    newUrl: string,
+    reauthPassword: string,
+    token?: string
+  ) => Promise<{ success: boolean; error?: string }>;
+  fetchAuditLogs: (token?: string) => Promise<void>;
 
   // Registrations & CSV actions
   addRegistration: (reg: Omit<RegistrationRecord, 'id' | 'ticketNumber' | 'registeredAt'>) => RegistrationRecord;
@@ -240,6 +267,86 @@ export const useCMSStore = create<CMSState>()(
       albums: INITIAL_ALBUMS,
       registrations: INITIAL_REGISTRATIONS,
       adminUsers: INITIAL_ADMINS,
+      googleFormUrl: GOOGLE_FORM_URL,
+      googleFormLastUpdated: null,
+      auditLogs: [],
+
+      fetchGoogleFormConfig: async () => {
+        try {
+          const res = await fetch('/api/config/google-form');
+          if (res.ok) {
+            const data = await res.json();
+            if (data.googleFormUrl) {
+              set({
+                googleFormUrl: data.googleFormUrl,
+                googleFormLastUpdated: data.lastUpdated || null,
+              });
+            }
+          }
+        } catch (e) {
+          // Gracefully keep fallback GOOGLE_FORM_URL
+          console.warn('[CMS] Using offline fallback for Google Form URL:', e);
+        }
+      },
+
+      saveGoogleFormUrlBackend: async (newUrl, reauthPassword, token) => {
+        const authToken = token || 'demo-admin-token';
+        try {
+          const res = await fetch('/api/admin/google-form', {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify({
+              googleFormUrl: newUrl,
+              reauthPassword,
+            }),
+          });
+
+          const data = await res.json();
+          if (!res.ok) {
+            return {
+              success: false,
+              error: data.message || data.error || 'Failed to update Google Form URL on server',
+            };
+          }
+
+          set({
+            googleFormUrl: data.googleFormUrl,
+            googleFormLastUpdated: data.lastUpdated || new Date().toISOString(),
+          });
+
+          // Refresh audit logs if available
+          get().fetchAuditLogs(authToken);
+
+          return { success: true };
+        } catch (e: any) {
+          return {
+            success: false,
+            error: e.message || 'Network error connecting to backend service',
+          };
+        }
+      },
+
+      fetchAuditLogs: async (token) => {
+        const authToken = token || 'demo-super-token';
+        try {
+          const res = await fetch('/api/admin/audit-logs?limit=20', {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data.logs)) {
+              set({ auditLogs: data.logs });
+            }
+          }
+        } catch (e) {
+          console.warn('[CMS] Failed to fetch audit logs from backend:', e);
+        }
+      },
 
       addEvent: (newEventData) => {
         const newEvent: FestEvent = {
