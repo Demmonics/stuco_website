@@ -3,63 +3,23 @@ export interface ArchiveYear {
   themeTitle: string;
   summary: string;
   highlights: string[];
-  youtubeVideoId?: string; // YouTube embed ID
-  youtubeUrl?: string;
+  youtubeVideoId: string; // YouTube embed ID
+  youtubeUrl: string;
   coverImage?: string;
 }
 
 export const ARCHIVE_YEARS: ArchiveYear[] = [
   {
-    year: 2024,
-    themeTitle: "Aerospace Frontiers & Heavy Rocketry",
-    summary: "Historic exhibition featuring GSLV Mk III liquid propellant stages, cryo-engine sections, and all-India robotics finals.",
+    year: 2025,
+    themeTitle: "Aerospace Frontiers & Defense Pinnacle",
+    summary: "The landmark edition featuring ISRO propulsion stages, advanced rocketry demonstrations, national robotics arenas, and military defense pavilions.",
     highlights: [
-      "GSLV Mk III propellant tank engineering presentation",
-      "Cryogenic stage full-scale structural cutaways",
-      "Over 22,000 students from 110 engineering colleges across India"
+      "ISRO cryogenic stage & propulsion engineering showcases",
+      "National Hackathon & Ideate Innovation Grand Finale",
+      "Over 25,000 student attendees across 120+ institutions"
     ],
-  },
-  {
-    year: 2023,
-    themeTitle: "Defense Mobility & Counter-Terror Grid",
-    summary: "Featuring live NSG tactical sniper demonstrations, super luxury automotive engineering, and inter-collegiate esports.",
-    highlights: [
-      "Live NSG counter-terror weaponry and sniper apparatus",
-      "Jaguar high-performance sedan mechanical exhibition",
-      "Esports Arena with 1,500+ LAN competitors"
-    ],
-  },
-  {
-    year: 2022,
-    themeTitle: "The Grand Campus Return",
-    summary: "A triumphant return to physical campus grounds with military salutes, BDDS dismantling demos, and red-carpet ceremonies.",
-    highlights: [
-      "Red-carpet ceremonial inauguration by naval commanders",
-      "BDDS explosive-component disassembly robotic models",
-      "Live rock and music performance night"
-    ],
-    youtubeVideoId: "qU3PzbUawmw",
-    youtubeUrl: "https://youtu.be/qU3PzbUawmw"
-  },
-  {
-    year: 2021,
-    themeTitle: "Hybrid Cyber-Symposium",
-    summary: "National hybrid technical symposium uniting corporate leaders, IAF wing commanders, and remote hackathon teams.",
-    highlights: [
-      "Keynote addresses from CitiusTech executive leadership",
-      "IAF Wing Commanders panel on avionics modernization",
-      "Digital Hackathon across 18 Indian states"
-    ],
-  },
-  {
-    year: 2020,
-    themeTitle: "Abhiyantriki Online — The Virtual Shift",
-    summary: "An entirely digital live-streamed tech festival maintaining nationwide engagement through virtual exhibits and webinars.",
-    highlights: [
-      "Virtual inaugural broadcast streamed to 30,000+ viewers",
-      "Online Ideate problem statements solved via cloud collaboration",
-      "AI & Machine Learning masterclasses"
-    ],
+    youtubeVideoId: "xFc8_o2UC9I",
+    youtubeUrl: "https://www.youtube.com/watch?v=xFc8_o2UC9I"
   },
   {
     year: 2019,
@@ -82,30 +42,19 @@ export const ARCHIVE_YEARS: ArchiveYear[] = [
       "RoboWars heavyweight national championship",
       "Autonomous obstacle-avoidance buggies"
     ],
-    youtubeVideoId: "RUfVZ7JisK4",
-    youtubeUrl: "https://www.youtube.com/watch?v=RUfVZ7JisK4"
+    youtubeVideoId: "IzmjWvcHSrU",
+    youtubeUrl: "https://www.youtube.com/watch?v=IzmjWvcHSrU"
   },
   {
     year: 2017,
     themeTitle: "The Quantum Leap",
-    summary: "Foundational year of the modern Abhiyantriki scale, hosting military defense tech and ISRO scientists.",
+    summary: "Foundational year of the modern Abhiyantriki scale, hosting military defense tech, ISRO scientists, and nationwide student innovators.",
     highlights: [
       "ISRO satellite tracking demo on campus",
       "Over 75 competitive technical events",
       "Launch of the National Ideate Innovation Challenge"
     ],
-    youtubeVideoId: "DMYVNUXh3PQ",
-    youtubeUrl: "https://www.youtube.com/watch?v=DMYVNUXh3PQ"
-  },
-  {
-    year: 2016,
-    themeTitle: "Origins of Excellence",
-    summary: "The inaugural teaser and milestone festival laying the foundation for Mumbai's largest technical festival.",
-    highlights: [
-      "Establishment of the Distinguished Lecture Series",
-      "Inter-college robotics league inception"
-    ],
-    youtubeVideoId: "_WRzGZKgST8",
-    youtubeUrl: "https://www.youtube.com/watch?v=_WRzGZKgST8"
+    youtubeVideoId: "OUIRPBjbjis",
+    youtubeUrl: "https://www.youtube.com/watch?v=OUIRPBjbjis"
   }
 ];

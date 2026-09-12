@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import { ARCHIVE_YEARS, type ArchiveYear } from '../../content/archiveYears';
 import { Film } from 'lucide-react';
-import { soundFx } from '../../lib/audioManager';
 import { BlurText } from '../reactbits';
 
 export const ArchiveSection: React.FC = () => {
-  const [selectedYear, setSelectedYear] = useState<number>(2024);
+  const [selectedYear, setSelectedYear] = useState<number>(2025);
 
   const activeArchive: ArchiveYear =
     ARCHIVE_YEARS.find((a) => a.year === selectedYear) || ARCHIVE_YEARS[0];
 
   const handleYearSelect = (year: number) => {
     setSelectedYear(year);
-    soundFx.play('pill', 0.4);
   };
 
   return (
@@ -29,7 +27,7 @@ export const ArchiveSection: React.FC = () => {
         </div>
         <div className="max-w-2xl mx-auto">
           <BlurText
-            text="A historical chronicle spanning from 2017 to 2025. Explore past tech exhibitions, live defense demonstrations, and archival festival aftermovies."
+            text="Official archival festival aftermovies and historical chronicles from past editions of Abhiyantriki (2017, 2018, 2019, 2025)."
             delay={60}
             stepDuration={0.25}
             direction="top"

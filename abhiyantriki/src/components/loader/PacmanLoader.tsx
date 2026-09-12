@@ -60,7 +60,6 @@ export const PacmanLoader: React.FC = () => {
   useEffect(() => {
     if (internalProgress >= 100 && !isFadingOut) {
       setIsFadingOut(true);
-      soundFx.play('pill', 0.4);
       soundFx.stopLoaderAudio(true);
       const timer = setTimeout(() => {
         finishLoading();
