@@ -1,0 +1,92 @@
+[
+  {
+    "model": "Space Warp Rig (#24 Dizzying space travel)",
+    "fileName": "space-warp.glb",
+    "author": "Canary Games",
+    "authorUrl": "https://sketchfab.com/CapAlatriste",
+    "sourceUrl": "https://sketchfab.com/3d-models/24-dizzying-space-travel-inktober2019-08ee5e4cabee421ebf0b2cc927d4d6fc",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by/4.0/",
+    "notes": "Used for cosmic warp transitions"
+  },
+  {
+    "model": "Brain Hologram",
+    "fileName": "brain-hologram.glb",
+    "author": "oxterium",
+    "authorUrl": "https://sketchfab.com/oxterium",
+    "sourceUrl": "https://sketchfab.com/3d-models/brain-hologram-09d686a1a1f745cba6b2385d0c831214",
+    "license": "Sketchfab Standard",
+    "licenseUrl": "https://sketchfab.com/licenses",
+    "notes": "Used for Ideate / AI / Hackathons"
+  },
+  {
+    "model": "Gears Assembly",
+    "fileName": "gears.glb",
+    "author": "melaamory",
+    "authorUrl": "https://sketchfab.com/melaamory",
+    "sourceUrl": "https://sketchfab.com/3d-models/gears-1fa1e31142714a11a2a77606c416aa05",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by/4.0/",
+    "notes": "Paired with Brain Hologram for engineering and robotics"
+  },
+  {
+    "model": "Manual Transmission Gear Box",
+    "fileName": "gearbox.glb",
+    "author": "austinchasejez23",
+    "authorUrl": "https://sketchfab.com/austinchasejez23",
+    "sourceUrl": "https://sketchfab.com/3d-models/manual-transmission-gear-box-811ce409dda746099924ac0b39d34140",
+    "license": "CC-BY-NC-4.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by-nc/4.0/",
+    "notes": "Mechanical engineering showcase"
+  },
+  {
+    "model": "Need some space? (Space Environment)",
+    "fileName": "space-environment.glb",
+    "author": "Loïc Norgeot",
+    "authorUrl": "https://sketchfab.com/norgeotloic",
+    "sourceUrl": "https://sketchfab.com/3d-models/need-some-space-d6521362b37b48e3a82bce4911409303",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by/4.0/",
+    "notes": "Deep space starfield & nebula environment"
+  },
+  {
+    "model": "PacMan",
+    "fileName": "pacman.glb",
+    "author": "subtixx",
+    "authorUrl": "https://sketchfab.com/subtixx",
+    "sourceUrl": "https://sketchfab.com/3d-models/pacman-17800bd2ae224ee281e43efcbc498e43",
+    "license": "CC-BY-NC-4.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by-nc/4.0/",
+    "notes": "Loading sequence dissolve moment"
+  },
+  {
+    "model": "Pacman Ghost Inky",
+    "fileName": "ghost-inky.glb",
+    "author": "Chaitanya Krishnan",
+    "authorUrl": "https://sketchfab.com/chaitanyak",
+    "sourceUrl": "https://sketchfab.com/3d-models/pacman-ghost-inky-bf94cb68178349f589fdb47b6c2c8b73",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by/4.0/",
+    "notes": "Loading sequence chase scene"
+  },
+  {
+    "model": "Space Boi",
+    "fileName": "space-boi.glb",
+    "author": "silvercrow101",
+    "authorUrl": "https://sketchfab.com/silvercrow101",
+    "sourceUrl": "https://sketchfab.com/3d-models/space-boi-f6a8c6a6727b4f2cb020c8b50bb2ee60",
+    "license": "CC-BY-NC-4.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by-nc/4.0/",
+    "notes": "Footer easter egg and 404 guide"
+  },
+  {
+    "model": "Sports Bike",
+    "fileName": "sports-bike.glb",
+    "author": "Futurealiti",
+    "authorUrl": "https://sketchfab.com/futurealiti",
+    "sourceUrl": "https://sketchfab.com/3d-models/sports-bike-a80259b859c842d5824c25c61e0fc421",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by/4.0/",
+    "notes": "Auto Expo flagship exhibit"
+  }
+]
