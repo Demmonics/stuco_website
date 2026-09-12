@@ -20,6 +20,8 @@ export interface FestConfig {
     bodyName: string;
     generalSecretary: string;
     generalSecretaryTitle: string;
+    creativeHead: string;
+    creativeHeadTitle: string;
     email: string;
     phone?: string;
   };
@@ -57,6 +59,8 @@ export const FEST_CONFIG: FestConfig = {
     // Confirmed by User: Kaveen Shetty
     generalSecretary: "Kaveen Shetty",
     generalSecretaryTitle: "General Secretary, KJSSE Students' Council 2026–27",
+    creativeHead: "Yoosha Abbas",
+    creativeHeadTitle: "Creative Head, KJSSE Students' Council",
     email: "abhiyantriki@somaiya.edu",
   },
   socials: {
