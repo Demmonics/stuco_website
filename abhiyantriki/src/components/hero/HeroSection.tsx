@@ -1,7 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { FEST_CONFIG, GOOGLE_FORM_URL } from '../../content/festConfig';
 import { gsap, ScrollTrigger } from '../../lib/lenis';
-import { soundFx } from '../../lib/audioManager';
 import { ParticleText, TextType, SpecularButton } from '../reactbits';
 
 export const HeroSection: React.FC = () => {
@@ -83,20 +82,38 @@ export const HeroSection: React.FC = () => {
         </div>
 
         {/* Interactive Particle Text Title with high-contrast particles & cursor repel */}
-        <div className="w-full flex items-center justify-center overflow-visible">
+        <div
+          className="relative z-10 w-full flex items-center justify-center overflow-visible py-2"
+          style={{
+            textShadow: '0 0 14px rgba(255, 255, 255, 0.45)',
+          }}
+        >
+          {/* Subtle dark radial gradient directly behind text layer to clear background visual noise */}
+          <div
+            className="absolute inset-0 pointer-events-none -z-10 flex items-center justify-center"
+            aria-hidden="true"
+          >
+            <div
+              className="w-full max-w-4xl h-44 rounded-full"
+              style={{
+                background: 'radial-gradient(ellipse at center, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 70%)',
+              }}
+            />
+          </div>
+
           <h1 className="sr-only">ABHIYANTRIKI 2026</h1>
           <ParticleText
             text="ABHIYANTRIKI"
             particleSize={2.0}
             density={3}
             color="#ffffff"
-            highlightColor="#b0b7c4"
+            highlightColor="#ffffff"
             scatter={140}
             gatherDuration={1400}
             stagger={300}
             pointerRepel={40}
             repelRadius={120}
-            idleDrift={0.4}
+            idleDrift={0.3}
             trigger="mount"
             fontSize="clamp(2.5rem, 8vw, 6.5rem)"
             fontWeight={400}
@@ -107,17 +124,16 @@ export const HeroSection: React.FC = () => {
         </div>
 
         {/* Subtitle Divider with Vertical Pipes */}
-        <div className="font-mono text-xs sm:text-[13px] text-zinc-400 tracking-[0.25em] uppercase indent-[0.25em] flex items-center justify-center">
+        <div className="relative z-10 font-mono text-xs sm:text-[13px] text-zinc-300 tracking-[0.25em] uppercase indent-[0.25em] flex items-center justify-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
           | &nbsp; A N N U A L &nbsp; T E C H N I C A L &nbsp; F E S T I V A L &nbsp; |
         </div>
 
         {/* Specular Shader Pill Action Button */}
-        <div className="pt-4 flex items-center justify-center gap-4 relative z-50">
+        <div className="pt-4 flex items-center justify-center gap-4 relative z-20">
           <a
             href={GOOGLE_FORM_URL}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => soundFx.play('pill', 0.5)}
             className="inline-block group no-underline"
           >
             <SpecularButton
@@ -129,7 +145,7 @@ export const HeroSection: React.FC = () => {
               tint="#ffffff"
               tintOpacity={0.06}
               blur={12}
-              className="font-mono text-xs tracking-[0.25em] uppercase"
+              className="font-mono text-xs tracking-[0.25em] uppercase drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]"
             >
               ( Register Now )
             </SpecularButton>
