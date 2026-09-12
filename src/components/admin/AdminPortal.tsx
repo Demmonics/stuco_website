@@ -20,6 +20,10 @@ import {
   Search,
   Download,
   Lock,
+  Link as LinkIcon,
+  AlertTriangle,
+  KeyRound,
+  Activity,
 } from 'lucide-react';
 
 interface AdminPortalProps {
@@ -35,6 +39,9 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onBackToFest }) => {
     albums,
     registrations,
     adminUsers,
+    googleFormUrl,
+    googleFormLastUpdated,
+    auditLogs,
     addEvent,
     updateEvent,
     deleteEvent,
@@ -44,9 +51,30 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onBackToFest }) => {
     addPhotoToAlbum,
     deletePhoto,
     setUserRole,
+    fetchGoogleFormConfig,
+    saveGoogleFormUrlBackend,
+    fetchAuditLogs,
   } = useCMSStore();
 
-  const [activeTab, setActiveTab] = useState<'events' | 'gallery' | 'registrants' | 'users'>('events');
+  const [activeTab, setActiveTab] = useState<'events' | 'gallery' | 'registrants' | 'users' | 'security'>('events');
+
+  // Google Form Security state
+  const [formInputUrl, setFormInputUrl] = useState(googleFormUrl || '');
+  const [reauthPassword, setReauthPassword] = useState('');
+  const [formStatusMessage, setFormStatusMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [isSubmittingForm, setIsSubmittingForm] = useState(false);
+
+  React.useEffect(() => {
+    fetchGoogleFormConfig();
+    fetchAuditLogs();
+  }, [fetchGoogleFormConfig, fetchAuditLogs]);
+
+  React.useEffect(() => {
+    if (googleFormUrl) {
+      setFormInputUrl(googleFormUrl);
+    }
+  }, [googleFormUrl]);
+
 
   // Event Modal state
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
@@ -339,6 +367,18 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onBackToFest }) => {
             04 // Admin Roles ({adminUsers.length})
           </button>
         )}
+
+        <button
+          onClick={() => setActiveTab('security')}
+          className={`px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 ${
+            activeTab === 'security'
+              ? 'bg-amber-500/20 text-amber-300 border border-amber-400 font-bold'
+              : 'glass-panel text-slate-400 hover:text-white'
+          }`}
+        >
+          <Shield className="w-4 h-4" />
+          05 // Security & Google Form
+        </button>
       </div>
 
       {/* =========================================================================
@@ -702,6 +742,374 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ onBackToFest }) => {
                       </td>
                     </tr>
                   ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          TAB 5: SECURITY & GOOGLE FORM DEFENSE (Council Admin & Super Admin)
+      ========================================================================= */}
+      {activeTab === 'security' && (
+        <div className="space-y-8">
+          {/* Header & Status Card */}
+          <div className="glass-panel p-6 rounded-2xl border border-amber-500/30 space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                  <Shield className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-display font-bold text-lg text-white">
+                    Google Form Protection & Hardening CMS
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    Guarded by server-side domain allowlist, mandatory re-authentication, and append-only audit logging.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  Allowlist Active (docs.google.com/forms)
+                </span>
+              </div>
+            </div>
+
+            {/* Threat Defense Architecture Badges */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-2 text-[11px] font-mono">
+              {/* Cloudflare DDoS Barrier - Commented out for now per specification */}
+              {/* <div className="p-3 rounded-xl bg-space-900/60 border border-ocean-700/60 flex flex-col gap-1">
+                <span className="text-slate-400">DDoS Barrier</span>
+                <span className="text-cyan-400 font-bold flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Cloudflare WAF
+                </span>
+              </div> */}
+              <div className="p-3 rounded-xl bg-space-900/60 border border-ocean-700/60 flex flex-col gap-1">
+                <span className="text-slate-400">Headers</span>
+                <span className="text-cyan-400 font-bold flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Helmet + CSP
+                </span>
+              </div>
+              <div className="p-3 rounded-xl bg-space-900/60 border border-ocean-700/60 flex flex-col gap-1">
+                <span className="text-slate-400">Rate Limiter</span>
+                <span className="text-cyan-400 font-bold flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 10 req / 15 min
+                </span>
+              </div>
+              <div className="p-3 rounded-xl bg-space-900/60 border border-ocean-700/60 flex flex-col gap-1">
+                <span className="text-slate-400">NoSQL Guard</span>
+                <span className="text-cyan-400 font-bold flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Mongo Sanitize
+                </span>
+              </div>
+              <div className="p-3 rounded-xl bg-space-900/60 border border-ocean-700/60 flex flex-col gap-1">
+                <span className="text-slate-400">Mutation Gate</span>
+                <span className="text-cyan-400 font-bold flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Re-Auth Verify
+                </span>
+              </div>
+              <div className="p-3 rounded-xl bg-space-900/60 border border-ocean-700/60 flex flex-col gap-1">
+                <span className="text-slate-400">Audit Logs</span>
+                <span className="text-cyan-400 font-bold flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Insert-Only
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Form Mutation Editor */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-7 glass-panel p-6 rounded-2xl border border-cyan-400/30 space-y-5">
+              <div className="flex items-center justify-between border-b border-ocean-700/60 pb-3">
+                <h4 className="font-display font-bold text-sm text-white flex items-center gap-2">
+                  <LinkIcon className="w-4 h-4 text-cyan-400" />
+                  Festival Registration Redirect Form
+                </h4>
+                {googleFormLastUpdated && (
+                  <span className="text-[11px] font-mono text-slate-400">
+                    Updated: {new Date(googleFormLastUpdated).toLocaleTimeString()}
+                  </span>
+                )}
+              </div>
+
+              {formStatusMessage && (
+                <div
+                  className={`p-3.5 rounded-xl text-xs font-mono flex items-start gap-2 ${
+                    formStatusMessage.type === 'success'
+                      ? 'bg-emerald-500/10 border border-emerald-500/40 text-emerald-300'
+                      : 'bg-red-500/10 border border-red-500/40 text-red-300'
+                  }`}
+                >
+                  {formStatusMessage.type === 'success' ? (
+                    <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
+                  ) : (
+                    <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+                  )}
+                  <span>{formStatusMessage.text}</span>
+                </div>
+              )}
+
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setFormStatusMessage(null);
+
+                  // Client check - allows docs.google.com/forms/ and forms.gle/
+                  const isFormsUrl =
+                    formInputUrl.startsWith('https://docs.google.com/forms/') ||
+                    formInputUrl.startsWith('http://docs.google.com/forms/') ||
+                    formInputUrl.startsWith('https://forms.gle/') ||
+                    formInputUrl.startsWith('http://forms.gle/');
+
+                  if (!isFormsUrl) {
+                    setFormStatusMessage({
+                      type: 'error',
+                      text: 'Security Rule: Only official Google Forms links (https://docs.google.com/forms/... or https://forms.gle/...) are allowed.',
+                    });
+                    soundFx.play('eatghost', 0.4);
+                    return;
+                  }
+
+                  if (!reauthPassword.trim()) {
+                    setFormStatusMessage({
+                      type: 'error',
+                      text: 'Re-authentication required: Please enter your account password to authorize this change.',
+                    });
+                    return;
+                  }
+
+                  setIsSubmittingForm(true);
+                  try {
+                    const token = user?.id.startsWith('demo-')
+                      ? user?.role === 'super_admin'
+                        ? 'demo-super-token'
+                        : 'demo-admin-token'
+                      : undefined;
+
+                    const res = await saveGoogleFormUrlBackend(formInputUrl, reauthPassword, token);
+                    if (res.success) {
+                      setFormStatusMessage({
+                        type: 'success',
+                        text: 'Google Form URL verified, updated, and audit-logged successfully!',
+                      });
+                      setReauthPassword('');
+                      soundFx.play('pill', 0.5);
+                    } else {
+                      setFormStatusMessage({
+                        type: 'error',
+                        text: res.error || 'Failed to update Google Form URL',
+                      });
+                      soundFx.play('eatghost', 0.4);
+                    }
+                  } catch (err: any) {
+                    setFormStatusMessage({
+                      type: 'error',
+                      text: err.message || 'An unexpected error occurred',
+                    });
+                  } finally {
+                    setIsSubmittingForm(false);
+                  }
+                }}
+                className="space-y-4 text-xs font-mono"
+              >
+                <div className="space-y-1.5">
+                  <label className="block text-slate-300 font-semibold">
+                    New Google Form URL *
+                  </label>
+                  <input
+                    type="url"
+                    required
+                    value={formInputUrl}
+                    onChange={(e) => setFormInputUrl(e.target.value)}
+                    placeholder="https://docs.google.com/forms/d/e/.../viewform"
+                    className={`w-full px-3.5 py-2.5 rounded-xl bg-space-900 border text-white font-mono text-xs focus:outline-none transition-colors ${
+                      formInputUrl &&
+                      (formInputUrl.startsWith('https://docs.google.com/forms/') ||
+                        formInputUrl.startsWith('http://docs.google.com/forms/') ||
+                        formInputUrl.startsWith('https://forms.gle/') ||
+                        formInputUrl.startsWith('http://forms.gle/'))
+                        ? 'border-emerald-500/60 focus:border-emerald-400'
+                        : formInputUrl
+                        ? 'border-red-500/60 focus:border-red-400'
+                        : 'border-ocean-700 focus:border-cyan-400'
+                    }`}
+                  />
+                  <div className="text-[11px] text-slate-400 flex items-center justify-between">
+                    <span>Must begin with: <code>docs.google.com/forms/...</code> or <code>forms.gle/...</code></span>
+                    {formInputUrl && (
+                      <a
+                        href={formInputUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-cyan-400 hover:underline flex items-center gap-1"
+                      >
+                        Preview link <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 p-4 rounded-xl bg-space-950/70 border border-amber-500/30">
+                  <div className="flex items-center gap-2 text-amber-300 font-semibold mb-1">
+                    <KeyRound className="w-4 h-4" />
+                    <span>Mandatory Re-Authentication</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 mb-2">
+                    To prevent session hijacking or unauthorized mutations, you must verify your password to update public redirect targets.
+                  </p>
+                  <input
+                    type="password"
+                    required
+                    value={reauthPassword}
+                    onChange={(e) => setReauthPassword(e.target.value)}
+                    placeholder={
+                      user?.id.startsWith('demo-')
+                        ? "Enter 'password' or 'admin123' for demo account"
+                        : 'Enter your password'
+                    }
+                    className="w-full px-3.5 py-2 rounded-xl bg-space-900 border border-ocean-700 text-white font-mono text-xs focus:outline-none focus:border-amber-400"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      fetchGoogleFormConfig();
+                      fetchAuditLogs();
+                    }}
+                    className="px-3 py-2 rounded-xl glass-panel-interactive text-slate-300 hover:text-white flex items-center gap-1.5 text-xs"
+                  >
+                    <Activity className="w-3.5 h-3.5" />
+                    Sync Status
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmittingForm}
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-space-950 font-display font-bold shadow-lg shadow-amber-500/20 disabled:opacity-50 flex items-center gap-2 transition-all"
+                  >
+                    {isSubmittingForm ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-space-950 border-t-transparent rounded-full animate-spin"></span>
+                        Verifying & Logging...
+                      </>
+                    ) : (
+                      <>
+                        <Shield className="w-4 h-4" />
+                        Authorize & Save URL
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* Current Active Target Display */}
+            <div className="lg:col-span-5 space-y-4">
+              <div className="glass-panel p-5 rounded-2xl border border-ocean-700/60 space-y-3">
+                <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+                  Live Public Target
+                </span>
+                <div className="p-3 rounded-xl bg-space-950/80 border border-ocean-800 break-all font-mono text-xs text-cyan-300">
+                  {googleFormUrl || 'No URL configured'}
+                </div>
+                <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+                  <span>Status: Operational</span>
+                  <a
+                    href={googleFormUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-signal-yellow hover:underline flex items-center gap-1"
+                  >
+                    Test Live Form <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+              </div>
+
+              {/* Security Rule Card */}
+              <div className="glass-panel p-5 rounded-2xl border border-ocean-700/60 space-y-2 text-xs font-mono text-slate-300">
+                <div className="text-amber-400 font-bold flex items-center gap-2">
+                  <Lock className="w-4 h-4" /> Hardened Defense Rule #4
+                </div>
+                <p className="text-slate-400 leading-relaxed text-[11px]">
+                  All mutations to the Google Form URL are validated strictly on the server against the allowlist regexp:
+                  <code className="block mt-1 p-2 rounded bg-space-950 text-cyan-400 text-[10px]">
+                    docs.google.com/forms/* &nbsp;||&nbsp; forms.gle/*
+                  </code>
+                  Any attempt to insert an external phishing link is rejected with HTTP 400 and logged to the incident tracker.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Immutable Audit Log Table */}
+          <div className="glass-panel p-6 rounded-2xl border border-ocean-700/60 space-y-4">
+            <div className="flex items-center justify-between border-b border-ocean-700/60 pb-3">
+              <div>
+                <h4 className="font-display font-bold text-sm text-white flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-emerald-400" />
+                  Immutable Security Audit Trail
+                </h4>
+                <p className="text-[11px] text-slate-400 font-mono">
+                  Insert-only audit logs stored in MongoDB. Entries cannot be modified or purged via API.
+                </p>
+              </div>
+              <button
+                onClick={() => fetchAuditLogs()}
+                className="px-3 py-1.5 rounded-lg glass-panel-interactive text-xs font-mono text-cyan-300 hover:text-white"
+              >
+                Refresh Logs
+              </button>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs font-mono">
+                <thead>
+                  <tr className="border-b border-ocean-700/60 text-slate-400 bg-space-950/40">
+                    <th className="p-3">Timestamp</th>
+                    <th className="p-3">Action</th>
+                    <th className="p-3">Initiator</th>
+                    <th className="p-3">IP Address</th>
+                    <th className="p-3">Old Value</th>
+                    <th className="p-3">New Value</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-ocean-800/40">
+                  {auditLogs.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="p-4 text-center text-slate-500 font-mono">
+                        No mutation audit records logged yet. Make a change above to see real-time audit logging.
+                      </td>
+                    </tr>
+                  ) : (
+                    auditLogs.map((log, idx) => (
+                      <tr key={log._id || idx} className="hover:bg-space-900/40 transition-colors">
+                        <td className="p-3 text-slate-400 text-[11px] whitespace-nowrap">
+                          {log.createdAt ? new Date(log.createdAt).toLocaleString() : 'Just now'}
+                        </td>
+                        <td className="p-3">
+                          <span className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[10px]">
+                            {log.action}
+                          </span>
+                        </td>
+                        <td className="p-3 text-white">
+                          <div>{log.userEmail}</div>
+                          <div className="text-[10px] text-slate-500">{log.userRole}</div>
+                        </td>
+                        <td className="p-3 text-slate-300 text-[11px]">{log.ipAddress || 'Internal'}</td>
+                        <td className="p-3 text-slate-400 max-w-[200px] truncate" title={String(log.oldValue)}>
+                          {log.oldValue || 'None'}
+                        </td>
+                        <td className="p-3 text-cyan-300 max-w-[200px] truncate" title={String(log.newValue)}>
+                          {log.newValue}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

@@ -1,11 +1,13 @@
 import React, { useRef, useEffect } from 'react';
 import { FEST_CONFIG, GOOGLE_FORM_URL } from '../../content/festConfig';
+import { useCMSStore } from '../../store/useCMSStore';
 import { gsap, ScrollTrigger } from '../../lib/lenis';
 import { ParticleText, TextType, SpecularButton } from '../reactbits';
 
 export const HeroSection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const hudRef = useRef<HTMLDivElement | null>(null);
+  const googleFormUrl = useCMSStore((state) => state.googleFormUrl);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -131,7 +133,7 @@ export const HeroSection: React.FC = () => {
         {/* Specular Shader Pill Action Button */}
         <div className="pt-4 flex items-center justify-center gap-4 relative z-20">
           <a
-            href={GOOGLE_FORM_URL}
+            href={googleFormUrl || GOOGLE_FORM_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block group no-underline"

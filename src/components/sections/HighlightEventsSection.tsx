@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FEST_EVENTS, type FestEvent } from '../../content/events';
 import { GOOGLE_FORM_URL } from '../../content/festConfig';
+import { useCMSStore } from '../../store/useCMSStore';
 import { Shield, Bot, Flame, Cpu, Gamepad2, ArrowRight } from 'lucide-react';
 import { soundFx } from '../../lib/audioManager';
 import { EchoText, Shuffle } from '../reactbits';
@@ -9,6 +10,7 @@ type CategoryTab = 'Defense & Space' | 'Robotics' | 'Expos' | 'Ideate' | 'Compet
 
 export const HighlightEventsSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<CategoryTab>('Defense & Space');
+  const googleFormUrl = useCMSStore((state) => state.googleFormUrl);
 
   const tabs: { id: CategoryTab; label: string; icon: React.ReactNode }[] = [
     { id: 'Defense & Space', label: 'Defense & Space', icon: <Shield className="w-3.5 h-3.5" /> },
@@ -217,7 +219,7 @@ export const HighlightEventsSection: React.FC = () => {
               </span>
 
               <a
-                href={GOOGLE_FORM_URL}
+                href={googleFormUrl || GOOGLE_FORM_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => soundFx.play('pill', 0.5)}
