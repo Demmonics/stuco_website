@@ -36,12 +36,13 @@ const SECTIONS = [
 
 export function App() {
   const { isMuted, toggleMute } = useUIStore();
-  const { user, isAuthenticated, openAuthModal, signOut } = useAuthStore();
+  const { user, isAuthenticated, openAuthModal, signOut, checkSession } = useAuthStore();
   const { registrations, googleFormUrl, fetchGoogleFormConfig } = useCMSStore();
 
   useEffect(() => {
     fetchGoogleFormConfig();
-  }, [fetchGoogleFormConfig]);
+    checkSession();
+  }, [fetchGoogleFormConfig, checkSession]);
 
   const [view, setView] = useState<'fest' | 'dashboard' | 'admin'>('fest');
   const [showCreditsModal, setShowCreditsModal] = useState(false);
