@@ -411,6 +411,9 @@ export function App() {
                 Attributions & 3D Licenses
               </button>
             </p>
+            <p className="pt-1.5 text-[11px] text-zinc-400">
+              Made by Creative Head <span className="text-white font-medium tracking-wide">{FEST_CONFIG.council.creativeHead}</span>
+            </p>
           </div>
         </div>
       </footer>
