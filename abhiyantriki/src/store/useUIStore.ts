@@ -57,7 +57,7 @@ export const useUIStore = create<UIState>((set) => {
       set({ isLoading: false, hasLoadedOnce: true, loadingProgress: 100 });
     },
 
-    isMuted: true, // Default muted for mobile autoplay compliance
+    isMuted: false, // Default unmuted so loading audio plays as requested
     toggleMute: () => set((state) => ({ isMuted: !state.isMuted })),
     setMuted: (muted: boolean) => set({ isMuted: muted }),
 

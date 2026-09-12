@@ -9,16 +9,46 @@ export const PacmanLoader: React.FC = () => {
   const [internalProgress, setInternalProgress] = useState(0);
   const [isFadingOut, setIsFadingOut] = useState(false);
 
-  // Smooth progress interpolator
+  // Play pacman loading audio freesound_community-playing-pac-man-6783.mp3
+  useEffect(() => {
+    soundFx.startLoaderAudio();
+
+    // User gesture unlock fallback for strict browser autoplay policies
+    const handleGesture = () => {
+      soundFx.startLoaderAudio();
+    };
+    window.addEventListener('pointerdown', handleGesture, { once: true });
+    window.addEventListener('keydown', handleGesture, { once: true });
+
+    return () => {
+      window.removeEventListener('pointerdown', handleGesture);
+      window.removeEventListener('keydown', handleGesture);
+      soundFx.stopLoaderAudio(false);
+    };
+  }, []);
+
+  // Synchronize mute state with loader audio
+  useEffect(() => {
+    soundFx.setLoaderMuted(isMuted);
+  }, [isMuted]);
+
+  // Snappy progress interpolator (completes in ~1.2s instead of taking too long)
   useEffect(() => {
     let animFrame: number;
-    const updateProgress = () => {
+    let lastTime = performance.now();
+
+    const updateProgress = (now: number) => {
+      const delta = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
+
       setInternalProgress((prev) => {
-        const target = Math.max(loadingProgress, prev + 0.6);
+        // Fast, smooth progression: advances ~85% per second
+        const increment = delta * 85;
+        const target = Math.min(100, Math.max(loadingProgress, prev + increment));
         if (target >= 100) {
           return 100;
         }
-        return prev + (target - prev) * 0.12;
+        return target;
       });
       animFrame = requestAnimationFrame(updateProgress);
     };
@@ -26,23 +56,29 @@ export const PacmanLoader: React.FC = () => {
     return () => cancelAnimationFrame(animFrame);
   }, [loadingProgress]);
 
-  // Handle completion
+  // Handle snappy completion
   useEffect(() => {
     if (internalProgress >= 100 && !isFadingOut) {
       setIsFadingOut(true);
-      soundFx.play('pill', 0.5);
+      soundFx.play('pill', 0.4);
+      soundFx.stopLoaderAudio(true);
       const timer = setTimeout(() => {
         finishLoading();
-      }, 700);
+      }, 350);
       return () => clearTimeout(timer);
     }
   }, [internalProgress, isFadingOut, finishLoading]);
+
+  const handleSkip = () => {
+    soundFx.stopLoaderAudio(false);
+    skipLoading();
+  };
 
   if (!isLoading) return null;
 
   return (
     <div
-      className={`fixed inset-0 z-[100] bg-[#08090a] flex flex-col justify-between p-6 sm:p-10 font-mono select-none overflow-hidden transition-opacity duration-700 ${
+      className={`fixed inset-0 z-[100] bg-[#08090a] flex flex-col justify-between p-6 sm:p-10 font-mono select-none overflow-hidden transition-opacity duration-400 ${
         isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
     >
@@ -116,7 +152,7 @@ export const PacmanLoader: React.FC = () => {
 
         {/* Skip button */}
         <button
-          onClick={skipLoading}
+          onClick={handleSkip}
           className="group flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 bg-white/5 text-[11px] text-zinc-300 hover:text-white hover:border-white transition-all active:scale-95 font-mono tracking-widest uppercase cursor-pointer"
         >
           <span>( Skip Ignition )</span>
