@@ -22,6 +22,14 @@ yarn-error.log*
 .vscode/
 *.local
 
+# Environment variables & secrets (never commit)
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+
 # OS system files
 .DS_Store
 Thumbs.db
