@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 380" width="1200" height="380">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#05070c"/>
+      <stop offset="50%" stop-color="#090d19"/>
+      <stop offset="100%" stop-color="#020306"/>
+    </linearGradient>
+
+    <!-- Glowing Text Gradient -->
+    <linearGradient id="glowCyan" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f0ff"/>
+      <stop offset="50%" stop-color="#7000ff"/>
+      <stop offset="100%" stop-color="#ff007f"/>
+    </linearGradient>
+
+    <!-- Accent Border Gradient -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.8"/>
+      <stop offset="30%" stop-color="#7000ff" stop-opacity="0.3"/>
+      <stop offset="70%" stop-color="#ffffff" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#ff007f" stop-opacity="0.7"/>
+    </linearGradient>
+
+    <!-- Glow Filter -->
+    <filter id="neonFilter" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur1"/>
+      <feGaussianBlur stdDeviation="12" result="blur2"/>
+      <feMerge>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Scanline Pattern -->
+    <pattern id="scanlines" width="100" height="4" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="100" y2="0" stroke="#00f0ff" stroke-opacity="0.04" stroke-width="1"/>
+    </pattern>
+
+    <!-- Swiss Grid Pattern -->
+    <pattern id="swissGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-opacity="0.035" stroke-width="1"/>
+      <circle cx="40" cy="40" r="1" fill="#00f0ff" fill-opacity="0.2"/>
+    </pattern>
+
+    <style>
+      @keyframes pulseGlow {
+        0%, 100% { opacity: 0.9; }
+        50% { opacity: 1; }
+      }
+      @keyframes blinkCursor {
+        0%, 49% { opacity: 1; }
+        50%, 100% { opacity: 0; }
+      }
+      .title-text {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        font-weight: 900;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        animation: pulseGlow 4s ease-in-out infinite;
+      }
+      .sub-title {
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-weight: 600;
+        letter-spacing: 0.32em;
+      }
+      .tech-tag {
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-size: 11px;
+        fill: #8e9bb0;
+        letter-spacing: 0.12em;
+      }
+      .cursor {
+        animation: blinkCursor 1s infinite;
+      }
+    </style>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="1200" height="380" rx="16" fill="url(#bgGrad)"/>
+  <rect width="1200" height="380" rx="16" fill="url(#swissGrid)"/>
+  <rect width="1200" height="380" rx="16" fill="url(#scanlines)"/>
+
+  <!-- Border Perimeter -->
+  <rect x="10" y="10" width="1180" height="360" rx="12" fill="none" stroke="url(#borderGrad)" stroke-width="1.5"/>
+
+  <!-- Swiss Crosshairs & Coordinates -->
+  <!-- Top Left -->
+  <path d="M 30 50 L 50 50 M 40 40 L 40 60" stroke="#00f0ff" stroke-width="1.5" opacity="0.7"/>
+  <text x="60" y="54" class="tech-tag" fill="#00f0ff" opacity="0.9">[ SYS.LOC // 19.0760° N, 72.8777° E ]</text>
+
+  <!-- Top Right -->
+  <path d="M 1150 50 L 1170 50 M 1160 40 L 1160 60" stroke="#00f0ff" stroke-width="1.5" opacity="0.7"/>
+  <text x="960" y="54" class="tech-tag" fill="#ff007f" opacity="0.9">STUCO_CORE // v3.4.0-PROD</text>
+
+  <!-- Bottom Coordinates -->
+  <path d="M 30 330 L 50 330 M 40 320 L 40 340" stroke="#7000ff" stroke-width="1.5" opacity="0.6"/>
+  <text x="60" y="334" class="tech-tag">ARCH: REACT 19 // R3F // LENIS // NODE</text>
+
+  <path d="M 1150 330 L 1170 330 M 1160 320 L 1160 340" stroke="#7000ff" stroke-width="1.5" opacity="0.6"/>
+  <text x="930" y="334" class="tech-tag">SECURITY: HELMET // RBAC // OAUTH</text>
+
+  <!-- Corner Accents -->
+  <rect x="18" y="18" width="8" height="8" fill="#00f0ff" opacity="0.9"/>
+  <rect x="1174" y="18" width="8" height="8" fill="#ff007f" opacity="0.9"/>
+  <rect x="18" y="354" width="8" height="8" fill="#7000ff" opacity="0.9"/>
+  <rect x="1174" y="354" width="8" height="8" fill="#00f0ff" opacity="0.9"/>
+
+  <!-- Center Status Pill -->
+  <rect x="470" y="42" width="260" height="28" rx="14" fill="#000000" stroke="#00f0ff" stroke-width="1" stroke-dasharray="4 2" opacity="0.85"/>
+  <circle cx="486" cy="56" r="4" fill="#00f0ff">
+    <animate attributeName="opacity" values="1;0.2;1" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <text x="502" y="60" class="tech-tag" fill="#ffffff" font-weight="bold">K.J. SOMAIYA TECHFEST</text>
+
+  <!-- Main Hero Headline with Neon Glow -->
+  <g transform="translate(600, 175)">
+    <text x="0" y="0" text-anchor="middle" font-size="64" fill="url(#glowCyan)" class="title-text" filter="url(#neonFilter)">
+      ABHIYANTRIKI
+    </text>
+    <text x="0" y="0" text-anchor="middle" font-size="64" fill="#ffffff" class="title-text" opacity="0.95">
+      ABHIYANTRIKI
+    </text>
+  </g>
+
+  <!-- Subtitle -->
+  <g transform="translate(600, 225)">
+    <text x="0" y="0" text-anchor="middle" font-size="13" fill="#a4b3c6" class="sub-title">
+      STUDENT COUNCIL OFFICIAL PLATFORM &amp; TECHNICAL FEST ENGINE
+    </text>
+  </g>
+
+  <!-- Telemetry Bar -->
+  <g transform="translate(425, 260)">
+    <rect x="0" y="0" width="350" height="1" fill="#ffffff" opacity="0.1"/>
+    <!-- Audio Waveform / Gauge Nodes -->
+    <rect x="30" y="-3" width="8" height="7" fill="#00f0ff" opacity="0.8"/>
+    <rect x="45" y="-6" width="8" height="13" fill="#00f0ff" opacity="0.6"/>
+    <rect x="60" y="-10" width="8" height="21" fill="#00f0ff" opacity="0.9"/>
+    <rect x="75" y="-4" width="8" height="9" fill="#7000ff" opacity="0.7"/>
+    <rect x="90" y="-8" width="8" height="17" fill="#7000ff" opacity="0.85"/>
+    <rect x="105" y="-12" width="8" height="25" fill="#ff007f" opacity="0.9"/>
+    <rect x="120" y="-6" width="8" height="13" fill="#ff007f" opacity="0.7"/>
+    <rect x="135" y="-2" width="8" height="5" fill="#00f0ff" opacity="0.5"/>
+
+    <text x="180" y="3" class="tech-tag" fill="#00f0ff">SYS_INTEGRITY: <tspan fill="#39ff14">OPTIMAL // 100%</tspan><tspan class="cursor" fill="#00f0ff"> _</tspan></text>
+  </g>
+</svg>
