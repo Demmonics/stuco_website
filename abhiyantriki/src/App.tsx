@@ -16,10 +16,11 @@ import { RegistrationModal } from './components/forms/RegistrationModal';
 import { AuthModal } from './components/auth/AuthModal';
 import { StudentDashboard } from './components/dashboard/StudentDashboard';
 import { AdminPortal } from './components/admin/AdminPortal';
+import { EventsPage } from './components/events/EventsPage';
 import { Persistent3DScene } from './components/three/Persistent3DScene';
 import { ScrollDotsRail } from './components/navigation/ScrollDotsRail';
 import { initLenis, scrollToSection } from './lib/lenis';
-import { Shield, Ticket, User, LogIn, LogOut, Compass, X } from 'lucide-react';
+import { Shield, Ticket, User, LogIn, LogOut, Compass, X, Calendar } from 'lucide-react';
 import { soundFx } from './lib/audioManager';
 import { Waves, FluidGlassCursor, OptionWheel } from './components/reactbits';
 
@@ -28,7 +29,7 @@ const SECTIONS = [
   { label: '02 // ABOUT', view: 'fest' as const, hash: 'overview' },
   { label: '03 // ARENAS', view: 'fest' as const, hash: 'service' },
   { label: '04 // SHOWCASE', view: 'fest' as const, hash: 'projects' },
-  { label: '05 // EVENTS', view: 'fest' as const, hash: 'events' },
+  { label: '05 // EVENTS', view: 'events' as const, hash: 'events' },
   { label: '06 // ARCHIVES', view: 'fest' as const, hash: 'archive' },
   { label: '07 // SPONSORS', view: 'fest' as const, hash: 'sponsors' },
   { label: '08 // PASSES', view: 'dashboard' as const, hash: 'dashboard' },
@@ -44,7 +45,7 @@ export function App() {
     checkSession();
   }, [fetchGoogleFormConfig, checkSession]);
 
-  const [view, setView] = useState<'fest' | 'dashboard' | 'admin'>('fest');
+  const [view, setView] = useState<'fest' | 'events' | 'dashboard' | 'admin'>('fest');
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const [showNavWheel, setShowNavWheel] = useState(false);
   const [credits, setCredits] = useState<any[]>([]);
@@ -69,8 +70,13 @@ export function App() {
       const cleanHash = rawHash.replace(/^#/, '');
       if (cleanHash === 'admin') {
         setView('admin');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (cleanHash === 'dashboard') {
         setView('dashboard');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (cleanHash === 'events') {
+        setView('events');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         setView('fest');
         if (cleanHash && cleanHash !== 'hero') {
@@ -109,7 +115,7 @@ export function App() {
   }, []);
 
 
-  const handleNavigate = (targetView: 'fest' | 'dashboard' | 'admin', hashTarget?: string) => {
+  const handleNavigate = (targetView: 'fest' | 'events' | 'dashboard' | 'admin', hashTarget?: string) => {
     soundFx.play('pill', 0.35);
     const wasDifferentView = view !== targetView;
     setView(targetView);
@@ -119,6 +125,8 @@ export function App() {
         setTimeout(() => {
           scrollToSection(hashTarget);
         }, wasDifferentView ? 90 : 0);
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     } else {
       window.location.hash = targetView === 'fest' ? 'hero' : targetView;
@@ -158,7 +166,7 @@ export function App() {
       </div>
 
       {/* 3. Single Persistent 3D WebGL Background Scene across Entire Journey */}
-      <Persistent3DScene />
+      <Persistent3DScene activeView={view} />
 
       {/* 4. Minimalist Technical Telemetry & Corner Crosshairs */}
       <div className="fixed top-3 left-4 text-zinc-600/60 font-mono text-[10px] pointer-events-none z-30 select-none hidden sm:block">
@@ -243,13 +251,22 @@ export function App() {
               04 // SHOWCASE
             </button>
             <button
+              onClick={() => handleNavigate('events')}
+              className={`hover:text-white transition-colors flex items-center gap-1.5 ${
+                view === 'events' ? 'text-white font-medium underline underline-offset-8 decoration-white/40' : ''
+              }`}
+            >
+              <Calendar className="w-3 h-3 text-zinc-400" />
+              05 // EVENTS
+            </button>
+            <button
               onClick={() => handleNavigate('dashboard')}
               className={`hover:text-white transition-colors flex items-center gap-1.5 ${
                 view === 'dashboard' ? 'text-white font-medium underline underline-offset-8 decoration-white/40' : ''
               }`}
             >
               <Ticket className="w-3 h-3 text-zinc-400" />
-              05 // PASSES
+              06 // PASSES
               {userRegistrationCount > 0 && (
                 <span className="px-1.5 py-0.2 rounded-full bg-white text-[9px] text-black font-bold">
                   {userRegistrationCount}
@@ -266,7 +283,7 @@ export function App() {
                 }`}
               >
                 <Shield className="w-3 h-3 text-zinc-400" />
-                06 // ADMIN
+                07 // ADMIN
               </button>
             )}
           </nav>
@@ -366,10 +383,14 @@ export function App() {
           </div>
         )}
 
+        {view === 'events' && (
+          <EventsPage onBackToFest={() => handleNavigate('fest', 'hero')} />
+        )}
+
         {view === 'dashboard' && (
           <StudentDashboard
             onBackToFest={() => handleNavigate('fest', 'hero')}
-            onBrowseEvents={() => handleNavigate('fest', 'projects')}
+            onBrowseEvents={() => handleNavigate('events')}
           />
         )}
 

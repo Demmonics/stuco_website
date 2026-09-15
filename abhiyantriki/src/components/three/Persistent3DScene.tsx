@@ -185,6 +185,60 @@ function PersistentBrainModel({ scrollProgressRef }: { scrollProgressRef: React.
   );
 }
 
+function NeedSomeSpaceModel({ scrollProgressRef }: { scrollProgressRef: React.MutableRefObject<number> }) {
+  const groupRef = useRef<THREE.Group>(null);
+  const spaceGltf = useGLTF('/models/space-environment.glb');
+
+  useEffect(() => {
+    if (!spaceGltf?.scene) return;
+
+    // Center and scale the cosmic starfield points cloud
+    const box = new THREE.Box3().setFromObject(spaceGltf.scene);
+    const center = box.getCenter(new THREE.Vector3());
+
+    spaceGltf.scene.position.x = -center.x;
+    spaceGltf.scene.position.y = -center.y;
+    spaceGltf.scene.position.z = -center.z;
+
+    // Scale so it fills the background expansively
+    spaceGltf.scene.scale.setScalar(1.45);
+
+    // Apply high-contrast luminescent cosmic stardust particle materials
+    spaceGltf.scene.traverse((child) => {
+      if ((child as THREE.Points).isPoints) {
+        const pts = child as THREE.Points;
+        pts.material = new THREE.PointsMaterial({
+          color: new THREE.Color('#dbeafe'),
+          size: 0.024,
+          transparent: true,
+          opacity: 0.85,
+          blending: THREE.AdditiveBlending,
+          sizeAttenuation: true,
+        });
+      }
+    });
+  }, [spaceGltf]);
+
+  useFrame((state) => {
+    if (!groupRef.current) return;
+    const t = state.clock.getElapsedTime();
+    const p = scrollProgressRef.current;
+    const pointer = state.pointer;
+
+    // Slow, majestic deep space drift with mouse parallax
+    groupRef.current.rotation.y = t * 0.03 + pointer.x * 0.12;
+    groupRef.current.rotation.x = Math.sin(t * 0.02) * 0.08 - pointer.y * 0.08;
+    groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, -p * 1.5, 0.05);
+    groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, -0.5 - p * 0.8, 0.05);
+  });
+
+  return (
+    <group ref={groupRef} position={[0, 0, -0.5]}>
+      <primitive object={spaceGltf.scene} />
+    </group>
+  );
+}
+
 function SceneFallback() {
   return (
     <mesh position={[0, 0, 0]}>
@@ -194,7 +248,11 @@ function SceneFallback() {
   );
 }
 
-export const Persistent3DScene: React.FC = () => {
+export interface Persistent3DSceneProps {
+  activeView?: 'fest' | 'events' | 'dashboard' | 'admin';
+}
+
+export const Persistent3DScene: React.FC<Persistent3DSceneProps> = ({ activeView = 'fest' }) => {
   const scrollProgressRef = useRef<number>(0);
 
   useEffect(() => {
@@ -233,13 +291,19 @@ export const Persistent3DScene: React.FC = () => {
         <directionalLight position={[-4, -3, -3]} intensity={0.6} color="#73767c" />
 
         <React.Suspense fallback={<SceneFallback />}>
-          {/* 2. Floating Atmospheric Dust Motes with Mouse Parallax */}
+          {/* Floating Atmospheric Dust Motes with Mouse Parallax */}
           <AtmosphericDustMotes />
 
-          {/* 3. Persistent Holographic Brain Model with Dynamic Scroll Animation */}
-          <Float speed={0.9} rotationIntensity={0.12} floatIntensity={0.15}>
-            <PersistentBrainModel scrollProgressRef={scrollProgressRef} />
-          </Float>
+          {/* Render Need for Space model on events view, Brain model on fest view */}
+          {activeView === 'events' ? (
+            <Float speed={0.7} rotationIntensity={0.1} floatIntensity={0.15}>
+              <NeedSomeSpaceModel scrollProgressRef={scrollProgressRef} />
+            </Float>
+          ) : (
+            <Float speed={0.9} rotationIntensity={0.12} floatIntensity={0.15}>
+              <PersistentBrainModel scrollProgressRef={scrollProgressRef} />
+            </Float>
+          )}
         </React.Suspense>
       </Canvas>
     </div>
@@ -247,3 +311,4 @@ export const Persistent3DScene: React.FC = () => {
 };
 
 useGLTF.preload('/models/brain-hologram.glb');
+useGLTF.preload('/models/space-environment.glb');
